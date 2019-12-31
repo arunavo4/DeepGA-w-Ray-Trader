@@ -1,10 +1,6 @@
 # Code in this file is copied and adapted from
 # https://github.com/openai/evolution-strategies-starter.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import numpy as np
 
 
@@ -48,8 +44,8 @@ class Adam(Optimizer):
         self.v = np.zeros(self.dim, dtype=np.float32)
 
     def _compute_step(self, globalg):
-        a = self.stepsize * (np.sqrt(1 - self.beta2**self.t) /
-                             (1 - self.beta1**self.t))
+        a = self.stepsize * (np.sqrt(1 - self.beta2 ** self.t) /
+                             (1 - self.beta1 ** self.t))
         self.m = self.beta1 * self.m + (1 - self.beta1) * globalg
         self.v = self.beta2 * self.v + (1 - self.beta2) * (globalg * globalg)
         step = -a * self.m / (np.sqrt(self.v) + self.epsilon)
