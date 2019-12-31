@@ -74,17 +74,6 @@ class SharedNoiseTable(object):
         return np.random.randint(0, len(self.noise) - dim + 1)
 
 
-# def get_ref_batch(env, batch_size):
-#     ref_batch = []
-#     observation = env.reset()
-#     while len(ref_batch) < batch_size:
-#         observation, rew, done, info= env.step(env.action_space.sample())
-#         ref_batch.append(observation)
-#         if done:
-#             observation = env.reset()
-#     return ref_batch
-
-
 def _monitor(env, path):
     return gym.wrappers.Monitor(env, path, resume=True)
 
@@ -141,14 +130,6 @@ class Worker(object):
             self.sess, self.env, self.env2, self.env.action_space, self.env.observation_space,
             self.preprocessor, config["observation_filter"], config["model"],
             **policy_params)
-        # self.sess.run(tf.global_variables_initializer())
-
-        # self.sess1 = utils.make_session(single_threaded=True)
-
-        # self.policymax = policies.GenericPolicy(
-        #     self.sess, self.env,self.env2,self.env.action_space, self.env.observation_space,
-        #     self.preprocessor, config["observation_filter"], config["model"],
-        #     **policy_params)
         self.sess.run(tf.global_variables_initializer())
 
     @property
@@ -168,7 +149,6 @@ class Worker(object):
         return return_filters
 
     def rollout(self, timestep_limit, add_noise=True):
-
         novelty, rollout_returns, rollout_rewards, rollout_length = policies.rollout(
             self.policy,
             self.config,
@@ -178,7 +158,6 @@ class Worker(object):
         return novelty, rollout_returns, rollout_rewards, rollout_length
 
     def do_rollouts(self, params, population, timestep_limit=None):
-
         # Set the network weights.
         self.policy.set_weights(params)
 
@@ -218,12 +197,10 @@ class Worker(object):
                         beta = (2 * u) ** (1.0 / (self.config["eta_c"] + 1))
                     else:
                         beta = (1.0 / (2 * (1 - u))) ** (1.0 / (self.config["eta_c"] + 1))
-                    # print('v1 is {}'.format(v1))
                     v1 = np.array(v1)
                     v2 = np.array(v2)
                     v = 0.5 * ((1 + beta) * v1 + (1 - beta) * v2)
                     v = v.tolist()
-                    # v=population[0][0]
 
                 v = v + perturbation
 
@@ -240,8 +217,6 @@ class Worker(object):
                 lengths.append([lengths_pos])
                 novelty.append([nov_pos[0]])
                 policy_weights.append([policy_pos])
-
-                # cross_entros=np.array(cross_entros,dtype=np.float32)
 
         return Result(
             noise_indices=noise_indices,
